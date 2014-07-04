@@ -34,31 +34,29 @@ def getSentence (review):
             continue
 
 class reviewsCollector:
+    def __init__ (self):
+        self.startFlipkartPage = 0
+        ''' need to write another method to reset it to 0 '''
     def setBaseProductUrl (self, url):
         self.baseUrl = url
     
     def traverseFlipkartReviews(self):
         url = self.baseUrl
         url+= "?type=all&start="
-        start = 0
-        r = ""
-        while True:
-            reviewPage = requests.get(url + str (start))
-            print "Printing url " + url + str (start)
-            #raw_input("continue ....")
-            reviewPageHtml = html.fromstring (reviewPage.text)
-            reviewList = reviewPageHtml.xpath('//span[@class="review-text"]/text()')
-            if len(reviewList) == 0:
-                break
-            else :
-                for review in reviewList:
-                    r += review
-                    #print "***************************"
-                break
-                start+=10
-        print "\n\n\n"
-        #printSentence (r )
-        return r
+        review = ""
+        start = self.startFlipkartPage
+        reviewPage = requests.get(url + str (start))
+        print "Printing url " + url + str (start)
+        #raw_input("continue ....")
+        reviewPageHtml = html.fromstring (reviewPage.text)
+        reviewList = reviewPageHtml.xpath('//span[@class="review-text"]/text()')
+        if len(reviewList) == 0:
+            return None
+        else :
+            for r in reviewList:
+                review += r
+            self.startFlipkartPage +=10
+            return review
 
     def traverseAmazonReviews (self):
         url = self.baseUrl
@@ -122,7 +120,7 @@ class analyseSentiment:
         for sentence in getSentence(review):
             for feature in featureList:
                 for subFeature in feature:
-                    if sentence.find(subFeature) != -1:
+                    if sentence.lower().find(subFeature) != -1:
                         fIndex = self.featureMap[feature[0]]
                         occurence = self.featureOccurence[fIndex]
                         sentiValue = self.featureSentiment[fIndex]\
@@ -152,6 +150,8 @@ class analyseSentiment:
         for feature in featureList:
             fIndex = self.featureMap[feature[0]]
             print feature, " --> ", self.featureSentiment[fIndex]
+        fIndex = self.featureMap['over-all']
+        print "Over-all", " --> ", self.featureSentiment[fIndex]
         print "$$$$$$$$$  DONE2 $$$$$$$$$$$$"
 
 
@@ -173,15 +173,20 @@ def main ():
 
 
     r.setBaseProductUrl (url3)
-    review = r.traverseAllReviews()
     raw_input ("Initial values, sentiment and occurence ")
     sentiment.setFeatureMap (f)
     raw_input("Mapped values, sentiment and occurence")
     sentiment.getAll(f)
-    raw_input ("Final values, sentiment and occurence")
-    sentiment.fillSentiment (review, f)
-    sentiment.getAll (f)
-    #sentiment.sentenceToAnalyse(review)
+    while (True):
+        review = r.traverseAllReviews()
+        if review == None:
+            break
+        else:
+            raw_input ("Printing from this page reviews **************")
+            raw_input ("Final values, sentiment and occurence")
+            sentiment.fillSentiment (review, f)
+            sentiment.getAll (f)
+            #sentiment.sentenceToAnalyse(review)
 
 
 if __name__ == "__main__":
