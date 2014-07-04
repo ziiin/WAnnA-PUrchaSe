@@ -19,11 +19,19 @@ class featureCollect:
             mainFeature = feature.xpath ('.//th[@class="group-head"]/text()')
             subFeature = feature.xpath ('.//td[@class="specs-key"]/text()')
             self.featureList.append (mainFeature + subFeature)
+        for feature in self.featureList:
+            for i in range (len (feature)):
+                feature[i] = feature[i].lower()
+
 
     def viewFeature (self):
         for feature in self.featureList:
             print feature
             print "\n\n"
+
+    def getFeature (self):
+        return self.featureList
+
 def main():
     url = 'http://www.flipkart.com/google-nexus-5/p/itmdv6f6z6amgnwr'
     collector = featureCollect()
