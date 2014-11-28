@@ -14,10 +14,10 @@ class featureCollect:
     def collect (self, url):
         page = requests.get(url)
         tree = html.fromstring(page.text)
-        features = tree.find_class ("fk-specs-type2")
+        features = tree.find_class ("productSpecs specSection")
         for feature in features:
-            mainFeature = feature.xpath ('.//th[@class="group-head"]/text()')
-            subFeature = feature.xpath ('.//td[@class="specs-key"]/text()')
+            mainFeature = feature.xpath ('.//td[@class="specsKey"]/text()')
+            subFeature = feature.xpath ('.//td[@class="specsValue"]/text()')
             self.featureList.append (mainFeature + subFeature)
         for feature in self.featureList:
             for i in range (len (feature)):
@@ -33,7 +33,7 @@ class featureCollect:
         return self.featureList
 
 def main():
-    url = 'http://www.flipkart.com/google-nexus-5/p/itmdv6f6z6amgnwr'
+    url = 'http://www.flipkart.com/google-nexus-5/p/itmdv6f6fbzekayt'
     collector = featureCollect()
     collector.collect (url)
     collector.viewFeature()
