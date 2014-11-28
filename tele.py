@@ -36,7 +36,9 @@ class featureCollect:
 
         for i in range(0,l):
             self.hotelTele[hotelList[i]] = teleList[i]
-        print self.hotelTele
+        for key in self.hotelTele :
+            print key, self.hotelTele[key]
+            
         # xpath: /html/body/section[1]/section[2]/section[4]
         #tele = tree.xpath ('/html/body/section[1]/section[2]/section[4]/section[1]/section[2]/section[1]/aside[1]/p[2]/a[1]/text()')
         # tele xpath: /html/body/section[1]/section[2]/section[4]/section[1]/section[2]/section[1]/aside[1]/p[2]/a[1]
